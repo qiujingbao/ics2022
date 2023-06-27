@@ -10,3 +10,4 @@
 !.gitignore
 !init.sh
 /am-kernels
+/fceux-am
