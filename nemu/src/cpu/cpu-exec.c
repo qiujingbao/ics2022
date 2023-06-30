@@ -41,6 +41,18 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
     log_write("%s\n", _this->logbuf);
   }
 #endif
+
+#ifdef CONFIG_BREAKPOINT_DEBUG
+for (size_t i = 0; i < 5; i++)
+  {
+    if (bp_pool[i].is_used == 1 && bp_pool[i].addr == _this->pc)
+    {
+      printf("pause on %lx\n", bp_pool[i].addr);
+      nemu_state.state = NEMU_STOP;
+      return;
+    }
+  }
+#endif
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND)
   {

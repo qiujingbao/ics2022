@@ -25,7 +25,14 @@ typedef struct watchpoint
   uint64_t val;
   uint64_t old_val;
 } WP;
+typedef struct braekpoint
+{
+  bool is_used;
+  uint64_t addr;
+}BP;
 
+/*break point api*/
+int inser_bp(uint64_t addr);
 word_t expr(char *e, bool *success);
 
 /* watchpoint api */

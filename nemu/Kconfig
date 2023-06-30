@@ -211,5 +211,22 @@ endchoice
 config RT_CHECK
   bool "Enable runtime checking"
   default y
+endmenu
 
+
+menu "personal debug option"
+config MEM_DEBUG
+  bool "Enable memory debug information"
+config ITRACE_DEBUG
+  bool "Enable itrace debug information"
+config FTRACE_DEBUG
+  bool "Enable ftrace debug information"
+config BREAKPOINT_DEBUG
+  bool "Enable breakpoint debug information"
+config ETRACE_DEBUG
+  bool "Enable etrace debug information"
+config STRACE_DEBUG
+  bool "Enable strace debug information"
+config DTRACE_DEBUG
+  bool "Enable dtrace debug information"
 endmenu
