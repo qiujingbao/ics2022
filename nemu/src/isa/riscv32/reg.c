@@ -24,8 +24,13 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
+  printf("寄存器名称\t十六进制\t十进制\n");
+  printf("pc\t%x\t%d\n",cpu.pc,cpu.pc);
+  for (size_t i = 0; i < sizeof(regs)/sizeof(char *); i++)
+  {
+    printf("%s\t%x\t%d\n",reg_name(i,32),cpu.gpr[i],cpu.gpr[i]);
+  }
 }
-
 word_t isa_reg_str2val(const char *s, bool *success) {
   return 0;
 }

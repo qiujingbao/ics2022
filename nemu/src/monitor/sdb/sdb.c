@@ -17,6 +17,7 @@
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "memory/vaddr.h"
 #include "sdb.h"
 
 static int is_batch_mode = false;
@@ -41,30 +42,98 @@ static char* rl_gets() {
 
   return line_read;
 }
-
+static int cmd_w(char *args)
+{
+	insert_watchpoint(args);
+	return 0;
+}
+static int cmd_d(char *args)
+{
+	int no;
+	sscanf(args, "%d", &no);
+	delete_watchpoint(no);
+	return 0;
+}
 static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
 }
 
+static int cmd_si(char *args)
+{
+	uint32_t step = 1;
+	if (args != NULL)
+	{
+		char *p = strtok(args, " ");
+		if (p == NULL)
+			return 0;
+		if (!strtok(NULL, " "))
+		{
+			step = atoi(p);
+		}
+	}
+	cpu_exec(step);
+	return 0;
+}
+
+static int cmd_info(char *args)
+{
+	char *p = strtok(args, " ");
+	if (p == NULL)
+		return 0;
+	if (strtok(NULL, " "))
+	{
+		return 0;
+	}
+	if (strlen(p) != 1)
+		return 0;
+	if (*p - 'r' == 0)
+		isa_reg_display();
+	if (*p - 'w' == 0)
+		display_watchpoint();
+	return 0;
+}
 
 static int cmd_q(char *args) {
   return -1;
 }
+static int cmd_x(char *args)
+{
+	int len = 0;
+	uint64_t addr;
+	sscanf(args, "%d %lx", &len, &addr);
+	for (size_t i = 0; i < len; i++)
+	{
+		uint64_t content = vaddr_read(addr + i, 4);
+		printf("0x%lx\t0x%04x\t0x%04x\t0x%04x\t0x%04x\n", addr + i, (uint16_t)content, (uint16_t)(content >> 16), (uint16_t)(content >> 32), (uint16_t)(content >> 48));
+	}
+	return 1;
+}
 
+static int cmd_p(char *args)
+{
+	bool success;
+	uint64_t res = expr(args, &success);
+	printf("result:%lx\n", res);
+	return res;
+}
 static int cmd_help(char *args);
 
-static struct {
-  const char *name;
-  const char *description;
-  int (*handler) (char *);
-} cmd_table [] = {
-  { "help", "Display information about all supported commands", cmd_help },
-  { "c", "Continue the execution of the program", cmd_c },
-  { "q", "Exit NEMU", cmd_q },
-
-  /* TODO: Add more commands */
-
+static struct
+{
+	const char *name;
+	const char *description;
+	int (*handler)(char *);
+} cmd_table[] = {
+	{"help", "Display information about all supported commands", cmd_help},
+	{"c", "Continue the execution of the program", cmd_c},
+	{"si", "signel next", cmd_si},
+	{"info", "", cmd_info},
+	{"x", "print mem ", cmd_x},
+	{"p", "expr calculate", cmd_p},
+	{"w", "add watchpoint", cmd_w},
+	{"d", "delete watchpoint", cmd_d},
+	{"q", "Exit NEMU", cmd_q},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
