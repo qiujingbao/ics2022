@@ -69,10 +69,7 @@ static long load_img() {
 }
 
 static int parse_args(int argc, char *argv[]) {
-  for (size_t i = 0; i < argc; i++)
-  {
-    Log("argv:%s",argv[i]);
-  }
+
   
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
@@ -84,6 +81,7 @@ static int parse_args(int argc, char *argv[]) {
   };
   int o;
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
+    Log("%c",o);
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
