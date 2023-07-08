@@ -69,6 +69,11 @@ static long load_img() {
 }
 
 static int parse_args(int argc, char *argv[]) {
+  for (size_t i = 0; i < argc; i++)
+  {
+    Log("argv:%s",argv[i]);
+  }
+  
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
     {"log"      , required_argument, NULL, 'l'},
