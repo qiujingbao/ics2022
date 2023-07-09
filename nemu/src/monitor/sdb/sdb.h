@@ -84,6 +84,10 @@ void delete_instraction();
 void insert_instrction(uint64_t addr);
 void show_ringbuf_ins_riscv64();
 
+/*brack trace api*/
+void insert_bt(uint64_t addr,uint8_t type,uint64_t goal_pc,uint64_t instruction);
+void show_bt_trace();
+
 /*elf api*/
 void init_ftrace(char *elf_file);
 void read_elf_header64(int32_t fd, Elf64_Ehdr *elf_header);
