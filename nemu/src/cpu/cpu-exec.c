@@ -71,6 +71,13 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
     IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
   }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  /*if can diff with standard */
+#ifdef CONFIG_DIFFTEST
+  if (nemu_state.state == NEMU_ABORT)
+  {
+    show_ringbuf_ins_riscv64();
+  }
+#endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc)
@@ -171,7 +178,6 @@ void cpu_exec(uint64_t n)
     Log("nemu: %s at pc = " FMT_WORD,
         (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
         nemu_state.halt_pc);
-    show_ringbuf_ins_riscv64();
 #ifdef CONFIG_FTRACE_DEBUG
     if (nemu_state.halt_ret != 0)
       show_bt_trace();
