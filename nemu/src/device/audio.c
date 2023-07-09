@@ -86,10 +86,24 @@ static void audio_io_handler(uint32_t offset, int len, bool is_write)
   }
 }
 void init_audio() {
+   /* 6 * uint32_t  32/4=4 */
+  /*
+  AUDIO_FREQ_ADDR 0x00
+  AUDIO_CHANNELS_ADDR 0x04
+  AUDIO_SAMPLES_ADDR 0x08
+  AUDIO_SBUF_SIZE_ADDR 0x0c
+  AUDIO_INIT_ADDR 0x10
+  AUDIO_COUNT_ADDR 0x14
+  */
   uint32_t space_size = sizeof(uint32_t) * nr_reg;
   audio_base = (uint32_t *)new_space(space_size);
+
+  /*tell the host process the audio is regiser*/
+  audio_base[4] = 1 << 31 | CONFIG_SB_SIZE;
+  /* sb_size */
+  audio_base[3] = CONFIG_SB_SIZE;
 #ifdef CONFIG_HAS_PORT_IO
-  add_pio_map ("audio", CONFIG_AUDIO_CTL_PORT, audio_base, space_size, audio_io_handler);
+  add_pio_map("audio", CONFIG_AUDIO_CTL_PORT, audio_base, space_size, audio_io_handler);
 #else
   add_mmio_map("audio", CONFIG_AUDIO_CTL_MMIO, audio_base, space_size, audio_io_handler);
 #endif
