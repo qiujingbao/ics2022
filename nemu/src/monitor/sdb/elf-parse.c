@@ -12,22 +12,22 @@ void init_ftrace(char *elf_file)
 		return;
 	}
 
-	Elf64_Ehdr eh64;	/* elf-header is fixed size */
-	Elf64_Shdr *sh_tbl; /* section-header table is variable size */
+	Elf32_Ehdr eh32;	/* elf-header is fixed size */
+	Elf32_Shdr *sh_tbl; /* section-header table is variable size */
 
-	read_elf_header64(fd, &eh64);
+	read_elf_header32(fd, &eh32);
 
 	/* Section header table :  */
-	sh_tbl = malloc(eh64.e_shentsize * eh64.e_shnum+1);
+	sh_tbl = malloc(eh32.e_shentsize * eh32.e_shnum+1);
 	if (!sh_tbl)
 	{
 		printf("Failed to allocate %d bytes\n",
-			   (eh64.e_shentsize * eh64.e_shnum));
+			   (eh32.e_shentsize * eh32.e_shnum));
 	}
-	read_section_header_table64(fd, eh64, sh_tbl);
-	//print_section_headers64(fd, eh64, sh_tbl);
+	read_section_header_table32(fd, eh32, sh_tbl);
+	//print_section_headers32(fd, eh32, sh_tbl);
 
-	print_symbols64(fd, eh64, sh_tbl);
+	print_symbols32(fd, eh32, sh_tbl);
 	free(sh_tbl);
 	for (size_t i = 0; i < elf_index; i++)
 	{
@@ -36,14 +36,14 @@ void init_ftrace(char *elf_file)
 	return;
 }
 
-void read_elf_header64(int32_t fd, Elf64_Ehdr *elf_header)
+void read_elf_header32(int32_t fd, Elf32_Ehdr *elf_header)
 {
 	assert(elf_header != NULL);
 	assert(lseek(fd, (off_t)0, SEEK_SET) == (off_t)0);
-	assert(read(fd, (void *)elf_header, sizeof(Elf64_Ehdr)) == sizeof(Elf64_Ehdr));
+	assert(read(fd, (void *)elf_header, sizeof(Elf32_Ehdr)) == sizeof(Elf32_Ehdr));
 }
 
-bool is_ELF64(Elf64_Ehdr eh)
+bool is_ELF32(Elf32_Ehdr eh)
 {
 	/* ELF magic bytes are 0x7f,'E','L','F'
 	 * Using  octal escape sequence to represent 0x7f
@@ -62,7 +62,7 @@ bool is_ELF64(Elf64_Ehdr eh)
 	}
 }
 
-void read_section_header_table64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
+void read_section_header_table32(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 {
 	uint32_t i;
 
@@ -74,12 +74,12 @@ void read_section_header_table64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[
 	}
 }
 
-char *read_section64(int32_t fd, Elf64_Shdr sh)
+char *read_section32(int32_t fd, Elf32_Shdr sh)
 {
 	char *buff = malloc(sh.sh_size);
 	if (!buff)
 	{
-		printf("%s:Failed to allocate %ldbytes\n","read_section64",sh.sh_size);
+		printf("%s:Failed to allocate %dbytes\n","read_section32",sh.sh_size);
 	}
 
 	assert(buff != NULL);
@@ -89,30 +89,30 @@ char *read_section64(int32_t fd, Elf64_Shdr sh)
 	return buff;
 }
 
-void print_symbol_table64(int32_t fd,
-						  Elf64_Ehdr eh,
-						  Elf64_Shdr sh_table[],
+void print_symbol_table32(int32_t fd,
+						  Elf32_Ehdr eh,
+						  Elf32_Shdr sh_table[],
 						  uint32_t symbol_table)
 {
 
 	char *str_tbl;
-	Elf64_Sym *sym_tbl;
+	Elf32_Sym *sym_tbl;
 	uint32_t i, symbol_count;
 
-	sym_tbl = (Elf64_Sym *)read_section64(fd, sh_table[symbol_table]);
+	sym_tbl = (Elf32_Sym *)read_section32(fd, sh_table[symbol_table]);
 
 	/* Read linked string-table
 	 * Section containing the string table having names of
 	 * symbols of this section
 	 */
 	uint32_t str_tbl_ndx = sh_table[symbol_table].sh_link;
-	str_tbl = read_section64(fd, sh_table[str_tbl_ndx]);
+	str_tbl = read_section32(fd, sh_table[str_tbl_ndx]);
 
-	symbol_count = (sh_table[symbol_table].sh_size / sizeof(Elf64_Sym));
+	symbol_count = (sh_table[symbol_table].sh_size / sizeof(Elf32_Sym));
 
 	for (i = 0; i < symbol_count; i++)
 	{
-		if(ELF64_ST_TYPE(sym_tbl[i].st_info)==0x02)
+		if(ELF32_ST_TYPE(sym_tbl[i].st_info)==0x02)
 		{
 			
 			strcpy(elf_func[elf_index].func_name,(str_tbl + sym_tbl[i].st_name));
@@ -132,7 +132,7 @@ void print_symbol_table64(int32_t fd,
 	free(sym_tbl);
 }
 
-void print_symbols64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
+void print_symbols32(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 {
 	uint32_t i;
 
@@ -141,7 +141,7 @@ void print_symbols64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 		if ((sh_table[i].sh_type == SHT_SYMTAB) || (sh_table[i].sh_type == SHT_DYNSYM))
 		{
 			printf("\n[Section %03d]", i);
-			print_symbol_table64(fd, eh, sh_table, i);
+			print_symbol_table32(fd, eh, sh_table, i);
 		}
 	}
 }

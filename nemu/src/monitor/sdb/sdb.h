@@ -90,10 +90,10 @@ void show_bt_trace();
 
 /*elf api*/
 void init_ftrace(char *elf_file);
-void read_elf_header64(int32_t fd, Elf64_Ehdr *elf_header);
-bool is_ELF64(Elf64_Ehdr eh);
-void read_section_header_table64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[]);
-char * read_section64(int32_t fd, Elf64_Shdr sh);
-void print_symbol_table64(int32_t fd,Elf64_Ehdr eh,Elf64_Shdr sh_table[],uint32_t symbol_table);
-void print_symbols64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[]);
+void read_elf_header32(int32_t fd, Elf32_Ehdr *elf_header);
+bool is_ELF32(Elf32_Ehdr eh);
+void read_section_header_table32(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[]);
+char * read_section32(int32_t fd, Elf32_Shdr sh);
+void print_symbol_table32(int32_t fd,Elf32_Ehdr eh,Elf32_Shdr sh_table[],uint32_t symbol_table);
+void print_symbols32(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[]);
 #endif
