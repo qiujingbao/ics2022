@@ -41,9 +41,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
     log_write("%s\n", _this->logbuf);
   }
 #endif
-
 #ifdef CONFIG_BREAKPOINT_DEBUG
-for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; i++)
   {
     if (bp_pool[i].is_used == 1 && bp_pool[i].addr == _this->pc)
     {
@@ -66,6 +65,7 @@ for (size_t i = 0; i < 5; i++)
   }
 
 #endif
+
   if (g_print_step)
   {
     IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
@@ -171,7 +171,11 @@ void cpu_exec(uint64_t n)
     Log("nemu: %s at pc = " FMT_WORD,
         (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
         nemu_state.halt_pc);
-    // fall through
+    show_ringbuf_ins_riscv64();
+#ifdef CONFIG_FTRACE_DEBUG
+    if (nemu_state.halt_ret != 0)
+      show_bt_trace();
+#endif
   case NEMU_QUIT:
     statistic();
   }
