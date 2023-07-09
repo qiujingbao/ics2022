@@ -30,9 +30,61 @@ enum {
 static uint8_t *sbuf = NULL;
 static uint32_t *audio_base = NULL;
 
-static void audio_io_handler(uint32_t offset, int len, bool is_write) {
+/* SDL Audio Callback Function */
+static void audio_update_handler(void *opaque, Uint8 *stream, int len)
+{
+  /* read from register by guest program write*/
+  if (audio_base[reg_count] > len)
+  {
+    memcpy(stream, sbuf, len);
+    audio_base[reg_count]-=len;
+    audio_base[reg_sbuf_size]=CONFIG_SB_SIZE-audio_base[reg_count];
+    return;
+  }
+}
+/* the argument read from rigister */
+static int audio_config[3];
+void audio_init()
+{
+  SDL_AudioSpec s = {};
+  s.format = AUDIO_S16SYS; // 假设系统中音频数据的格式总是使用16位有符号数来表示
+  s.channels = audio_config[1];
+  s.samples = audio_config[2];
+  s.freq = audio_config[0];
+  s.userdata = NULL; // 不使用
+  s.size = CONFIG_SB_SIZE;
+  s.callback = (void *)audio_update_handler;
+  SDL_InitSubSystem(SDL_INIT_AUDIO);
+  SDL_OpenAudio(&s, NULL);
+  SDL_PauseAudio(0);
 }
 
+/* 什么时候被调用？ */
+/* nemu提供了一个虚拟的物理平台 如qemu一样 */
+/* 当程序 也就是在nemu上运行的程序使用 lb lh lw sd等指令*/
+/* 这些指令的调用栈如下 */
+/*                           是否在pmem中*/
+/* vaddr_read-->paddr_read-->pmem_read-->host_read-->guest_to_host*/
+/*                        -->mmio_read-->map_read -->invoke_callback-->handler*/
+/*                                       根据地址获得IOMap*/
+
+static void audio_io_handler(uint32_t offset, int len, bool is_write)
+{
+  /* len is lenght */
+  /* host program write */
+  /* the access addr must in  0xa0000200-0xa000020c */
+
+  /* audio_config 存储三个数据 根据audio_base寄存器分布而分布*/
+  if (len == 4 && is_write == 1 && offset % 4 == 0 && offset<=8)
+  {
+    audio_config[offset / 4] = audio_base[offset / 4];
+  }
+  /* 当所有数据都获得的时候就初始化 */
+  if (audio_config[0] != 0 && audio_config[1] != 0 && audio_config[2] != 0)
+  {
+    audio_init();
+  }
+}
 void init_audio() {
   uint32_t space_size = sizeof(uint32_t) * nr_reg;
   audio_base = (uint32_t *)new_space(space_size);
