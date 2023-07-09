@@ -66,5 +66,8 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
   check_bound(map, addr);
   paddr_t offset = addr - map->low;
   host_write(map->space + offset, len, data);
+  #ifdef CONFIG_DTRACE_DEBUG
+  Log("%#x\t for len=%d at %s", addr, len, map ? map− > name : "No device");
+#endif
   invoke_callback(map->callback, offset, len, true);
 }
