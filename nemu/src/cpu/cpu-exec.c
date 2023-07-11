@@ -63,7 +63,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
     printf("NO:%d\texp:%s \told_val:%lx\tnew_val:%lx\n", x->NO, x->exp, x->old_val, x->val);
     nemu_state.state = NEMU_STOP;
   }
-
 #endif
 
   if (g_print_step)
