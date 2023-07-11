@@ -36,6 +36,8 @@ static void restart() {
 void init_isa() {
   /* Load built-in image. */
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
+  /* 针对riscv32, 你需要将mstatus初始化为0x1800. */
+  cpu.csr[1] = 0x1800;
 
   /* Initialize this virtual computer system. */
   restart();

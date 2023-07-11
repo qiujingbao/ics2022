@@ -14,12 +14,20 @@
 ***************************************************************************************/
 
 #include <isa.h>
-
+enum
+{
+  mepc = 0,
+  mstatus = 1,
+  mcause = 2,
+  mtvec = 3
+};
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
-  /* TODO: Trigger an interrupt/exception with ``NO''.
-   * Then return the address of the interrupt/exception vector.
-   */
-
+    #ifdef CONFIG_ETRACE_DEBUG
+  Log("etrace: ecall %d",NO);
+  #endif
+  cpu.csr[mcause] = NO;
+  cpu.csr[mepc] = epc + 4; // 下一条不是ecall而是ecall+4
+  return cpu.csr[mtvec];
   return 0;
 }
 
