@@ -70,7 +70,22 @@ enum
 		*imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1) | (BITS(i, 7, 7) << 11); \
 	} while (0)
 
-
+static inline void csrrs_instrction(int dest, word_t imm, word_t src)
+{
+	IFDEF(CONFIG_ETRACE_DEBUG, Log("etrace: csrrs"));
+	word_t t, *ptr = NULL;
+	ptr = &CSR_Register(imm);
+	t = *ptr;
+	*ptr = t | src;
+	gpr(dest) = t;
+}
+static inline void csrrw_instrction(int dest, word_t imm, word_t src)
+{
+	IFDEF(CONFIG_ETRACE_DEBUG, Log("etrace: csrrw"));
+	word_t t = CSR_Register(imm);
+	CSR_Register(imm) = src;
+	gpr(dest) = t;
+}
 static void decode_operand(Decode *s, int *dest, word_t *src1, word_t *src2, word_t *imm, int type)
 {
 	uint32_t i = s->isa.inst.val;
@@ -150,6 +165,10 @@ static int decode_exec(Decode *s)
 
 	INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr, I, R(dest) = s->pc + 4; s->dnpc = (src1 + imm);insert_bt(s->pc, 1, s->dnpc,s->isa.inst.val));
 	INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J, R(dest) = s->pc + 4; s->dnpc = s->pc + imm;insert_bt(s->pc, 0, s->dnpc,s->isa.inst.val));
+	INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs, I, csrrs_instrction(dest, imm, src1));
+	INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, csrrw_instrction(dest, imm, src1));
+
+
 
 	INSTPAT("??????? ????? ????? 101 ????? 11000 11", bge, B, if ((int)src1 >= (int)src2) s->dnpc = s->pc + imm);
 	INSTPAT("??????? ????? ????? 111 ????? 11000 11", bgeu, B, if (src1 >= src2) s->dnpc = s->pc + imm);
