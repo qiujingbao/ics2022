@@ -12,7 +12,6 @@
 
 static uintptr_t loader(PCB *pcb, const char *filename)
 {
-  Log("loader:%s", filename);
   Elf_Ehdr elf;
   int fd = fs_open(filename);
   assert(fd != -1);

@@ -25,7 +25,7 @@ void init_proc() {
   Log("Initializing processes...");
 
   // load program here
-  naive_uload(&pcb[0],"file-test");
+  naive_uload(&pcb[0],"/bin/file-test");  /* 查看file.h中的路径 而不是单独名称*/
 }
 
 Context* schedule(Context *prev) {
