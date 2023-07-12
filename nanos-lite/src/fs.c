@@ -52,9 +52,8 @@ extern size_t ramdisk_write(const void *, size_t, size_t);
 // 忽略flags和mode
 int fs_open(const char *pathname /*, int flags, mode_t mode*/)
 {
-  for (int i = FD_FB + 1; i < FD_SIZE; i++)
+  for (int i = 0; i < FD_SIZE; i++)
   {
-    Log("file:%s",file_table[i].name);
     if (strcmp(pathname, file_table[i].name) == 0)
     {
       file_table[i].read = *ramdisk_read;
