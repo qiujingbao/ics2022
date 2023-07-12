@@ -61,6 +61,7 @@ int fs_open(const char *pathname /*, int flags, mode_t mode*/)
       return i;
     }
   }
+  Log("failuer");
   return -1;
 }
 size_t fs_lseek(int fd, size_t offset, int whence)
