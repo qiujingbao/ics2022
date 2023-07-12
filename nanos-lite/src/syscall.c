@@ -8,12 +8,12 @@ int sys_exit()
 {
   Log("%d %p",args[1],args[1]);
   halt((int)args[1]);
-  return 1;
+  return 0;
 }
 int sys_yield()
 {
   yield();
-  return 1;
+  return 0;
 }
 
 /* steal from xv6 os */
