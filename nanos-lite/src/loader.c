@@ -1,5 +1,6 @@
 #include <proc.h>
 #include <elf.h>
+#include <fs.h>
 
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
@@ -8,10 +9,31 @@
 # define Elf_Ehdr Elf32_Ehdr
 # define Elf_Phdr Elf32_Phdr
 #endif
-extern size_t ramdisk_read(void *buf, size_t offset, size_t len) ;
-extern size_t ramdisk_write(const void *buf, size_t offset, size_t len) ;
+
 static uintptr_t loader(PCB *pcb, const char *filename) {
-  Elf_Ehdr ehdr;
+   Elf_Ehdr elf;
+  int fd = fs_open(filename);
+  fs_lseek(fd, 0, SEEK_SET);
+  fs_read(fd, &elf, sizeof(Elf_Ehdr));
+  Elf_Phdr Phdr;
+  assert(*(uint32_t *)elf.e_ident == 0x464c457f);
+  for (int i = 0; i < elf.e_phnum; i++)
+  {
+    fs_lseek(fd, elf.e_phoff + i * elf.e_phentsize, SEEK_SET);
+    fs_read(fd, &Phdr, sizeof(Phdr));
+    if (Phdr.p_type == 1)
+    {
+      fs_lseek(fd, Phdr.p_offset, SEEK_SET);
+      fs_read(fd, (void *)Phdr.p_vaddr, Phdr.p_filesz);
+      for (unsigned int i = Phdr.p_filesz; i < Phdr.p_memsz; i++)
+      {
+        ((char *)Phdr.p_vaddr)[i] = 0;
+      }
+    }
+  }
+  return elf.e_entry;
+  /* 加载第一个文件 */
+  /*Elf_Ehdr ehdr;
   ramdisk_read(&ehdr, 0, sizeof(Elf_Ehdr));
   assert((*(uint32_t *)ehdr.e_ident == 0x464c457f));
 
@@ -23,7 +45,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       memset((void*)(phdr[i].p_vaddr+phdr[i].p_filesz), 0, phdr[i].p_memsz - phdr[i].p_filesz);
     }
   }
-  return ehdr.e_entry;
+  return ehdr.e_entry;*/
 }
 
 void naive_uload(PCB *pcb, const char *filename) {
