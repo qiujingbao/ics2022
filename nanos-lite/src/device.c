@@ -26,9 +26,13 @@ int read_timeofday(struct timeval *tv){
   tv->tv_usec = io_read(AM_TIMER_UPTIME).us % 1000000;
   return 0;
 }
-size_t events_read(void *buf, size_t offset, size_t len)
-{
-  return 0;
+//TODO:添加对len的处理
+size_t events_read(void *buf, size_t offset, size_t len) {
+  yield();
+  AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
+  if(ev.keycode==AM_KEY_NONE)return 0;
+  sprintf(buf,"%s %s\n",ev.keydown?"kd":"ku",keyname[ev.keycode]);
+  return len;
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len)
