@@ -44,7 +44,7 @@ $(shell mkdir -p $(DST_DIR))
 APP     ?= $(WORK_DIR)/build/$(NAME)-$(ISA)
 ARCHIVE  = $(WORK_DIR)/build/$(NAME)-$(ISA).a
 
-
+CFLAGS += -save-temps
 ### Add default libraries for ISA != native
 ifneq ($(ISA), native)
 LIBS += libc libos
