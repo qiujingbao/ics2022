@@ -30,7 +30,13 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   return cpu.csr[mtvec];
   return 0;
 }
+/*中断返回 mret*/
+word_t isa_exit_intr()
+{
+  IFDEF(CONFIG_ETRACE_DEBUG, Log("etrace: mret"));
 
+  return cpu.csr[mepc];
+}
 word_t isa_query_intr() {
   return INTR_EMPTY;
 }

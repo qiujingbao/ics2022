@@ -137,7 +137,6 @@ static int decode_exec(Decode *s)
 
 	INSTPAT_START();
 
-	INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(gpr(17), s->pc));
 
 
 
@@ -167,6 +166,8 @@ static int decode_exec(Decode *s)
 	INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J, R(dest) = s->pc + 4; s->dnpc = s->pc + imm;insert_bt(s->pc, 0, s->dnpc,s->isa.inst.val));
 	INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs, I, csrrs_instrction(dest, imm, src1));
 	INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, csrrw_instrction(dest, imm, src1));
+	INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, R, s->dnpc = (vaddr_t)isa_exit_intr());
+	INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(gpr(17), s->pc));
 
 
 
