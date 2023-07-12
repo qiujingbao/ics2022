@@ -74,8 +74,8 @@ void *_sbrk(intptr_t increment) {
 }
 
 int _open(const char *path, int flags, mode_t mode) {
-  _exit(SYS_open);
-  return 0;
+  int ret = _syscall_(SYS_open, (intptr_t)path, flags, mode);
+  return ret;
 }
 int _read(int fd, void *buf, size_t count) {
   int ret = _syscall_(SYS_read, fd, (intptr_t)buf, count);
