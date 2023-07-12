@@ -1,6 +1,7 @@
 #include <common.h>
 #include "syscall.h"
 #include <proc.h>
+#include <fs.h>
 /* 0是系统调用号 1 2 3分别是第x个参数  */
 static uintptr_t args[4];
 extern size_t fs_write(int fd, const void *buf, size_t count);
@@ -25,12 +26,41 @@ int sys_sbrk()
 {
   return 0;
 }
+int sys_open()
+{
+  const char *name = (const char *)(args[1]);
+  return fs_open(name);
+}
+int sys_close()
+{
+  int fd = args[1];
+  return fs_close(fd);
+}
+int sys_read()
+{
+  int fd = args[1];
+  char *buf = (char *)args[2];
+  size_t off = args[3];
+  return fs_read(fd, buf, off);
+}
+int sys_lseek()
+{
+  int fd = args[1];
+  size_t off = args[2];
+  int whnece = args[3];
+  return fs_lseek(fd, off, whnece);
+}
 /* steal from xv6 os */
 static int (*syscalls[])(void) = {
     [SYS_yield] sys_yield,
     [SYS_exit] sys_exit,
     [SYS_write] sys_write,
     [SYS_brk] sys_sbrk,
+    [SYS_read] sys_read,
+    [SYS_open] sys_open,
+    [SYS_close] sys_close,
+    [SYS_lseek] sys_lseek,
+
 };
 void do_syscall(Context *c)
 {
