@@ -25,7 +25,7 @@ void init_proc() {
   Log("Initializing processes...");
 
   // load program here
-  naive_uload(NULL,NULL);
+  naive_uload(&pcb[0],"file-test");
 }
 
 Context* schedule(Context *prev) {
