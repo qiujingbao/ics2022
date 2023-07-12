@@ -1,5 +1,5 @@
 #include <common.h>
-
+#include<sys/time.h>
 #if defined(MULTIPROGRAM) && !defined(TIME_SHARING)
 #define MULTIPROGRAM_YIELD() yield()
 #else
@@ -21,7 +21,11 @@ size_t serial_write(const void *buf, size_t offset, size_t len)
   }
   return len;
 }
-
+int read_timeofday(struct timeval *tv){
+  tv->tv_sec = io_read(AM_TIMER_UPTIME).us / 1000000;
+  tv->tv_usec = io_read(AM_TIMER_UPTIME).us % 1000000;
+  return 0;
+}
 size_t events_read(void *buf, size_t offset, size_t len)
 {
   return 0;

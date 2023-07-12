@@ -91,12 +91,11 @@ off_t _lseek(int fd, off_t offset, int whence) {
   off_t ret = _syscall_(SYS_lseek, fd, (intptr_t)offset, whence);
   return ret;
 }
-
-
 int _gettimeofday(struct timeval *tv, struct timezone *tz) {
-  _exit(SYS_gettimeofday);
+  return _syscall_(SYS_gettimeofday, (intptr_t)tv, (intptr_t)tz, 0);
   return 0;
 }
+
 
 int _execve(const char *fname, char * const argv[], char *const envp[]) {
   _exit(SYS_execve);

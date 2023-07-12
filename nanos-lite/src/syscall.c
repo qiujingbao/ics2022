@@ -4,7 +4,12 @@
 #include <fs.h>
 /* 0是系统调用号 1 2 3分别是第x个参数  */
 static uintptr_t args[4];
-extern size_t fs_write(int fd, const void *buf, size_t count);
+extern int read_timeofday(void *);
+int sys_gettimeofday()
+{
+  return read_timeofday((void *)args[1]);
+}
+
 int sys_exit()
 {
   halt((int)args[1]);
@@ -60,6 +65,7 @@ static int (*syscalls[])(void) = {
     [SYS_open] sys_open,
     [SYS_close] sys_close,
     [SYS_lseek] sys_lseek,
+    [SYS_gettimeofday] sys_gettimeofday,
 
 };
 void do_syscall(Context *c)
