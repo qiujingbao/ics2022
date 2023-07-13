@@ -29,8 +29,9 @@ char *hello_arg_test2="kcontext 2 !!!";
 extern void naive_uload(PCB *pcb, const char *filename);
 extern void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
 void init_proc() {
-  context_kload(&pcb[0], hello_fun, hello_arg_test1);
+ 
   context_uload(&pcb[1], "/bin/nslider", NULL,NULL);
+  context_uload(&pcb[1], "/bin/bird", NULL,NULL);
 
   switch_boot_pcb();
   Log("Initializing processes...");
