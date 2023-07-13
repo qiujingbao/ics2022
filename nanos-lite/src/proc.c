@@ -31,7 +31,7 @@ extern void context_uload(PCB *pcb, const char *filename, char *const argv[], ch
 static char *args_menu[] = {".",NULL};
 void init_proc() {
   context_kload(&pcb[0], hello_fun,"NULL");
-  context_uload(&pcb[1], "/bin/cat", args_menu,NULL);
+  context_uload(&pcb[1], "/bin/sleep", args_menu,NULL);
   switch_boot_pcb();
   Log("Initializing processes...");
 }
