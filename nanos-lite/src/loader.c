@@ -83,7 +83,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   // malloc temp argv
   char *args[argc];
   char *envs[envc];
-
+printf("1\n");
   // fill the argc string to string segment
   for (int i = 0; i < argc; i++)
   {
@@ -91,7 +91,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     strcpy(sp, argv[i]);
     args[i] = sp;
   }
-
+printf("1\n");
   // fill the envp string to string segment
   for (int i = 0; i < envc; i++)
   {
@@ -101,7 +101,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   }
   // fill the point to string in stack
   char **spp = (char **)sp;
-
+printf("1\n");
   spp--;
   *spp = NULL;
   for (int i = envc - 1; i >= 0; i--)
@@ -109,7 +109,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     spp--;
     *spp = envs[i];
   }
-
+printf("1\n");
   spp--;
   *spp = NULL;
   for (int i = argc - 1; i >= 0; i--)
