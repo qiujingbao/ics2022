@@ -42,7 +42,6 @@ Context *schedule(Context *prev)
 {
   /* 操作系统中以PCB为单位 到了中断时是以context为单位的 */
   // save the context pointer
-Log("a");
 current->cp = prev;
 // always select pcb[0] as the new process
 current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
