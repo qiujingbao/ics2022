@@ -38,6 +38,7 @@ void init_proc() {
   Log("pcb boot:%p",&pcb_boot);
   Log("pcb 0:%p",&pcb[0]);
   Log("pcb 1:%p",&pcb[1]);
+  Log("size%d",sizeof(struct Context));
   Log("Initializing processes...");
 }
 
