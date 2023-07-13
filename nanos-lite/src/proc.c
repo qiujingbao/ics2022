@@ -33,13 +33,6 @@ void init_proc() {
   context_uload(&pcb[1], "/bin/bird", NULL,NULL);
 
   switch_boot_pcb();
-  Log("pcb cp boot:%p",pcb_boot.cp);
-  Log("pcb cp 0:%p",pcb[0].cp);
-  Log("pcb cp 1:%p",pcb[1].cp);
-  Log("pcb boot:%p",&pcb_boot);
-  Log("pcb 0:%p",&pcb[0]);
-  Log("pcb 1:%p",&pcb[1]);
-  Log("size%d",sizeof(struct Context));
   Log("Initializing processes...");
 }
 
