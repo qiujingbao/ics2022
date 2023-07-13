@@ -69,11 +69,10 @@ void NDL_OpenCanvas(int *w, int *h)
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h)
 {
-  printf("x:%d y:%d w:%d h:%d width:%d high:%d\n", x, y, w, h, canvas_w, canvas_h);
+  #ifdef HAS_CENTER
   x = (screen_w / 2 - w / 2);
   y = (screen_h / 2 - h / 2);
-  printf("x:%d y:%d w:%d h:%d width:%d high:%d\n", x, y, w, h, canvas_w, canvas_h);
-
+  #endif
   for (int i = 0; i < h; i++)
   {
     lseek(fb, ((y + i) * screen_w + x) * 4, SEEK_SET);
