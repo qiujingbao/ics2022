@@ -13,6 +13,7 @@ int main() {
   Log("'Hello World!' from Nanos-lite");
   Log("Build time: %s, %s", __TIME__, __DATE__);
   Log("size:%d",sizeof(AddrSpace));
+  Log("size:%d",sizeof(struct Context *));
   init_mm();
 
   init_device();
