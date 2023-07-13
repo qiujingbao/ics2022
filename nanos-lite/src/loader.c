@@ -126,5 +126,5 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   pcb->cp->GPRx = (uintptr_t)spp;
   /* 因为不同的用户进程不能都是用操作系统的尾部作为栈顶所以统一使用new_page的分配方式 */
   // pcb->cp->GPRx = (uintptr_t)heap.end;
-  // Log("entry:%p gprx:%p cp:%p",entry,pcb->cp->GPRx,pcb->cp);
+   Log("entry:%p gprx:%p cp:%p",entry,pcb->cp->GPRx,pcb->cp);
 }
