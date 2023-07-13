@@ -45,7 +45,6 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg)
   Context *c = (Context *)((uint8_t *)(kstack.end) - sizeof(Context));
   /*设置context的各个寄存器*/
   /*除此之外全部为0*/
-  
   /* 配置寄存器即可 其余寄存器为0 */
   c->mepc = (uintptr_t)entry;
   c->mstatus = 0x1800;
