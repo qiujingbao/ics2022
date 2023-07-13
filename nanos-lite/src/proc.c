@@ -28,10 +28,11 @@ char *hello_arg_test1="kcontext 1 !!!";
 char *hello_arg_test2="kcontext 2 !!!";
 extern void naive_uload(PCB *pcb, const char *filename);
 extern void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
+char *s[]={"hello","ok","zzzz"};
 void init_proc() {
  
-  context_uload(&pcb[0], "/bin/bird", NULL,NULL);
-  context_uload(&pcb[1], "/bin/hello", NULL,NULL);
+  context_kload(&pcb[0], hello_fun,NULL);
+  context_uload(&pcb[1], "/bin/hello", s,NULL);
 
   switch_boot_pcb();
   Log("Initializing processes...");
@@ -41,13 +42,11 @@ Context *schedule(Context *prev)
 {
   /* 操作系统中以PCB为单位 到了中断时是以context为单位的 */
   // save the context pointer
- Log("%p %p %p",current,prev,current->cp);
 
 current->cp = prev;
 
 // always select pcb[0] as the new process
 current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
-Log("currect cp :%p",current->cp);
 // then return the new context
 return current->cp;
 }

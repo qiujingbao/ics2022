@@ -1,7 +1,11 @@
 #include <unistd.h>
 #include <stdio.h>
 
-int main() {
+int main(int argc,char *argv[]) {
+  for(int i=0;i<argc;i++)
+  {
+    printf("%s\n",argv[i]);
+  }
   write(1, "Hello World!\n", 13);
   int i = 2;
   volatile int j = 0;

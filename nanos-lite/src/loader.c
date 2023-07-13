@@ -58,11 +58,73 @@ void naive_uload(PCB *pcb, const char *filename)
   ((void (*)())entry)();
 }
 
+int get_count_ptr(char *const argv[])
+{
+  int len = 0;
+  while (argv[len] != NULL)
+  {
+    Log("%s",argv[len]);
+    len++;
+  }
+  return len;
+}
+/*
+两个栈一个用户栈一个内核栈
+内核栈即为在PCB中声明的，用户栈是整个系统的尾部，通过GPRx也就是a0寄存器传递过去
+*/
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[])
 {
+  Log("context uload %p %p",argv,envp);
+  /* 分配8页也就是32KB 并把指针移动到末端 */
+  char *sp = (char *)new_page(8) + 8 * PGSIZE;
+  int argc = (argv == NULL) ? 0 : get_count_ptr(argv);
+  int envc = (envp == NULL) ? 0 : get_count_ptr(envp);
+  Log("%d %d ",argc,envc);
+  // malloc temp argv
+  char *args[argc];
+  char *envs[envc];
+
+  // fill the argc string to string segment
+  for (int i = 0; i < argc; i++)
+  {
+    sp -= (strlen(argv[i]) + 1);
+    strcpy(sp, argv[i]);
+    args[i] = sp;
+  }
+
+  // fill the envp string to string segment
+  for (int i = 0; i < envc; i++)
+  {
+    sp -= (strlen(envp[i]) + 1);
+    strcpy(sp, envp[i]);
+    envs[i] = sp;
+  }
+  // fill the point to string in stack
+  char **spp = (char **)sp;
+
+  spp--;
+  *spp = NULL;
+  for (int i = envc - 1; i >= 0; i--)
+  {
+    spp--;
+    *spp = envs[i];
+  }
+
+  spp--;
+  *spp = NULL;
+  for (int i = argc - 1; i >= 0; i--)
+  {
+    spp--;
+    *spp = args[i];
+  }
+
+  spp--;
+  *((int *)spp) = argc;
   uintptr_t entry = loader(pcb, filename);
-  pcb->cp = ucontext(&pcb->as, heap, (void *)entry);
-  Log("%p",pcb->cp);
-  pcb->cp->GPRx = (uintptr_t)heap.end;
-  //Log("entry:%p gprx:%p cp:%p",entry,pcb->cp->GPRx,pcb->cp);
+  Area stack = {pcb->stack, pcb->stack + STACK_SIZE};
+  pcb->cp = ucontext(&pcb->as, stack, (void *)entry);
+  pcb->cp->GPRx = (uintptr_t)spp;
+  /* 因为不同的用户进程不能都是用操作系统的尾部作为栈顶所以统一使用new_page的分配方式 */
+  // pcb->cp->GPRx = (uintptr_t)heap.end;
+  // Log("entry:%p gprx:%p cp:%p",entry,pcb->cp->GPRx,pcb->cp);
 }
