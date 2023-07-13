@@ -5,6 +5,9 @@
 /* 0是系统调用号 1 2 3分别是第x个参数  */
 static uintptr_t args[4];
 extern int read_timeofday(void *);
+extern void naive_uload(void *pcb, const char *filename);
+extern int execve(const char *filename, char *const argv[], char *const envp[]);
+
 int sys_gettimeofday()
 {
   return read_timeofday((void *)args[1]);
@@ -12,7 +15,13 @@ int sys_gettimeofday()
 
 int sys_exit()
 {
-  halt((int)args[1]);
+  naive_uload(NULL, "/bin/menu");
+  return 0;
+}
+/* 如果要完成启动 游戏必须修改下面的代码 将参数传入程序*/
+/* 启动的时候根据elf文件找到 static区 将参数写入 */
+int sys_execve()
+{
   return 0;
 }
 int sys_yield()
@@ -66,7 +75,7 @@ static int (*syscalls[])(void) = {
     [SYS_close] sys_close,
     [SYS_lseek] sys_lseek,
     [SYS_gettimeofday] sys_gettimeofday,
-
+    [SYS_execve] sys_execve,
 };
 void do_syscall(Context *c)
 {
