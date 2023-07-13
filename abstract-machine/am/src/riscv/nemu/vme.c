@@ -70,5 +70,16 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
-  return NULL;
+    /*
+  咦, 说好的用户栈呢? 事实上, 用户栈的分配是ISA无关的, 
+  所以用户栈相关的部分就交给Nanos-lite来进行, 
+  ucontext()无需处理. 
+  目前我们让Nanos-lite把heap.end作为用户进程的栈顶, 
+  然后把这个栈顶赋给用户进程的栈指针寄存器就可以了.
+  */
+  /* 和前边的内核线程的分配一样 */
+  Context *ctx = kstack.end - sizeof(Context);
+  ctx->mstatus = 0x1800;
+  ctx->mepc    = (uintptr_t)entry;
+  return ctx;
 }
