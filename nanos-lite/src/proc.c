@@ -28,7 +28,7 @@ char *hello_arg_test1="kcontext 1 !!!";
 char *hello_arg_test2="kcontext 2 !!!";
 extern void naive_uload(PCB *pcb, const char *filename);
 extern void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
-static char *args_menu[] = {"/bin/menu", "sss","ok","sssss",NULL};
+static char *args_menu[] = {"/bin/menu", "sss","ok","ss"};
 void init_proc() {
  
   context_kload(&pcb[0], hello_fun,NULL);
