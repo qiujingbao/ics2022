@@ -39,8 +39,18 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
   return true;
 }
 
-Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  return NULL;
+Context *kcontext(Area kstack, void (*entry)(void *), void *arg)
+{
+  /*从栈尾找到一个context大小的位置，然后转换为conext给cp复制*/
+  Context *c = (Context *)((uint8_t *)(kstack.end) - sizeof(Context));
+  /*设置context的各个寄存器*/
+  /*除此之外全部为0*/
+  
+  /* 配置寄存器即可 其余寄存器为0 */
+  c->mepc = (uintptr_t)entry;
+  c->mstatus = 0x1800;
+  c->gpr[10] = (uintptr_t)arg;
+  return c;
 }
 
 void yield() {

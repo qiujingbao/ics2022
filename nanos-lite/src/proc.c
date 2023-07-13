@@ -18,16 +18,32 @@ void hello_fun(void *arg) {
     yield();
   }
 }
+
+void context_kload(PCB *create_pcb, void (*entry)(void *), void *arg)
+{
+  Area stack = {create_pcb->stack, create_pcb->stack + STACK_SIZE};
+  create_pcb->cp = kcontext(stack, entry, arg);
+}
 extern void naive_uload(PCB *pcb, const char *filename);
 void init_proc() {
+    context_kload(&pcb[0], hello_fun, NULL);
+
   switch_boot_pcb();
 
   Log("Initializing processes...");
-
-  // load program here
-  naive_uload(&pcb[0],"/bin/bird");  /* 查看file.h中的路径 而不是单独名称*/
 }
 
-Context* schedule(Context *prev) {
-  return NULL;
+/*  */
+Context *schedule(Context *prev)
+{
+  /* 操作系统中以PCB为单位 到了中断时是以context为单位的 */
+  // save the context pointer
+// save the context pointer
+current->cp = prev;
+
+// always select pcb[0] as the new process
+current = &pcb[0];
+
+// then return the new context
+return current->cp;
 }
