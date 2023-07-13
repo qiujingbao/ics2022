@@ -18,12 +18,7 @@ int sys_exit()
   naive_uload(NULL, "/bin/menu");
   return 0;
 }
-/* 如果要完成启动 游戏必须修改下面的代码 将参数传入程序*/
-/* 启动的时候根据elf文件找到 static区 将参数写入 */
-int sys_execve()
-{
-  return 0;
-}
+
 int sys_yield()
 {
   yield();
@@ -63,6 +58,12 @@ int sys_lseek()
   size_t off = args[2];
   int whnece = args[3];
   return fs_lseek(fd, off, whnece);
+}
+/* 如果要完成启动 游戏必须修改下面的代码 将参数传入程序*/
+/* 启动的时候根据elf文件找到 static区 将参数写入 */
+int sys_execve()
+{
+  return execve((char *)args[1],(char**)args[2],(char**)args[3]);
 }
 /* steal from xv6 os */
 static int (*syscalls[])(void) = {

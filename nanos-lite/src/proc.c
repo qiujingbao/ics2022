@@ -31,14 +31,19 @@ extern void context_uload(PCB *pcb, const char *filename, char *const argv[], ch
 static char *args_menu[] = {"/bin/menu", "sss","ok",NULL};
 void init_proc() {
   context_kload(&pcb[0], hello_fun,"NULL");
-   context_uload(&pcb[1], "/bin/hello", args_menu,NULL);
-
-  
-
+  context_uload(&pcb[1], "/bin/exec-test", args_menu,NULL);
   switch_boot_pcb();
   Log("Initializing processes...");
 }
-
+/* pcb1 已经被使用 现在测试功能正确性 次函数会重新加载到pc1*/
+/* 总而言之 调度功能没有实现 sys_execve 正确 */
+int execve(const char *filename, char *const argv[], char *const envp[])
+{
+  context_uload(&pcb[1], filename, argv, envp);
+  switch_boot_pcb();
+  yield();
+  return 0;
+}
 Context *schedule(Context *prev)
 {
   /* 操作系统中以PCB为单位 到了中断时是以context为单位的 */
