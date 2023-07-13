@@ -10,7 +10,7 @@ static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 static int canvas_w = 0, canvas_h = 0;
 static int fbctr, fb;
-#define HAS_CENTER 1
+//#define HAS_CENTER 1
 uint32_t NDL_GetTicks()
 {
   struct timeval tv;
