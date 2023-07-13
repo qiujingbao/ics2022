@@ -62,7 +62,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
 {
   uintptr_t entry = loader(pcb, filename);
   pcb->cp = ucontext(&pcb->as, heap, (void *)entry);
-  uintptr_t end_adderss=(uintptr_t)heap.end;
-  pcb->cp->GPRx = end_adderss;
+  //uintptr_t end_adderss=(uintptr_t)heap.end;
+  pcb->cp->GPRx = 1;
   //Log("entry:%p gprx:%p cp:%p",entry,pcb->cp->GPRx,pcb->cp);
 }
