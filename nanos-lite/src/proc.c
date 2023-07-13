@@ -24,11 +24,12 @@ void context_kload(PCB *create_pcb, void (*entry)(void *), void *arg)
   Area stack = {create_pcb->stack, create_pcb->stack + STACK_SIZE};
   create_pcb->cp = kcontext(stack, entry, arg);
 }
-char *hello_arg_test="kcontext !!!";
+char *hello_arg_test1="kcontext 1 !!!";
+char *hello_arg_test2="kcontext 2 !!!";
 extern void naive_uload(PCB *pcb, const char *filename);
 void init_proc() {
-  context_kload(&pcb[0], hello_fun, hello_arg_test);
-  context_kload(&pcb[1], hello_fun, hello_arg_test);
+  context_kload(&pcb[0], hello_fun, hello_arg_test1);
+  context_kload(&pcb[1], hello_fun, hello_arg_test2);
   switch_boot_pcb();
 
   Log("Initializing processes...");
