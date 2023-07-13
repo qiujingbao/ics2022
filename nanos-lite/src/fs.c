@@ -54,13 +54,21 @@ static Finfo file_table[] __attribute__((used)) = {
 void init_fs()
 {
   // TODO: initialize the size of /dev/fb
+  AM_GPU_CONFIG_T cfg = io_read(AM_GPU_CONFIG);
+  file_table[FD_FB].size = cfg.width * cfg.height * 4;
 }
 extern size_t ramdisk_read(void *, size_t, size_t);
 extern size_t ramdisk_write(const void *, size_t, size_t);
 // 忽略flags和mode
 int fs_open(const char *pathname /*, int flags, mode_t mode*/)
 {
-  for (int i = 0; i < FD_SIZE; i++)
+   if (strcmp(pathname, file_table[FD_EVENT].name) == 0)
+    return FD_EVENT;
+  else if (strcmp(pathname, file_table[FD_DISPINFO].name) == 0)
+    return FD_DISPINFO;
+  else if (strcmp(pathname, file_table[FD_FB].name) == 0)
+    return FD_FB;
+  for (int i = FD_FB + 1; i < FD_SIZE; i++)
   {
     if (strcmp(pathname, file_table[i].name) == 0)
     {
