@@ -32,7 +32,6 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
   return sprintf((char*)buf,"WIDTH:%d\nHEIGHT:%d\n",w,h);
 }
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-  yield();
   int w = io_read(AM_GPU_CONFIG).width;
   int h = io_read(AM_GPU_CONFIG).height;
   int x = (offset/4)%w;
@@ -43,7 +42,6 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
 }
 //TODO:添加对len的处理
 size_t events_read(void *buf, size_t offset, size_t len) {
-  yield();
   AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
   if(ev.keycode==AM_KEY_NONE)return 0;
   sprintf(buf,"%s %s\n",ev.keydown?"kd":"ku",keyname[ev.keycode]);
