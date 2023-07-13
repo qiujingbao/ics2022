@@ -61,10 +61,8 @@ void naive_uload(PCB *pcb, const char *filename)
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[])
 {
   uintptr_t entry = loader(pcb, filename);
-  printf("a\n");
   pcb->cp = ucontext(&pcb->as, heap, (void *)entry);
-  printf("a\n");
+  Log("%p",(uintptr_t)heap.end);
   pcb->cp->GPRx = (uintptr_t)heap.end;
-  printf("a\n");
   Log("entry:%p gprx:%p cp:%p",entry,pcb->cp->GPRx,pcb->cp);
 }
