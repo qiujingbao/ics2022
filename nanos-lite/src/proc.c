@@ -26,19 +26,16 @@ void context_kload(PCB *create_pcb, void (*entry)(void *), void *arg)
 }
 extern void naive_uload(PCB *pcb, const char *filename);
 void init_proc() {
-    context_kload(&pcb[0], hello_fun, NULL);
-
+  context_kload(&pcb[0], hello_fun, NULL);
   switch_boot_pcb();
 
   Log("Initializing processes...");
 }
 
-/*  */
 Context *schedule(Context *prev)
 {
   /* 操作系统中以PCB为单位 到了中断时是以context为单位的 */
   // save the context pointer
-// save the context pointer
 current->cp = prev;
 
 // always select pcb[0] as the new process
