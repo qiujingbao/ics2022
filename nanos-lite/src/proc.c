@@ -30,14 +30,14 @@ extern void naive_uload(PCB *pcb, const char *filename);
 void init_proc() {
   context_kload(&pcb[0], hello_fun, hello_arg_test1);
   context_kload(&pcb[1], hello_fun, hello_arg_test2);
+
+  switch_boot_pcb();
   Log("pcb cp boot:%p",pcb_boot.cp);
   Log("pcb cp 0:%p",pcb[0].cp);
   Log("pcb cp 1:%p",pcb[1].cp);
   Log("pcb boot:%p",&pcb_boot);
   Log("pcb 0:%p",&pcb[0]);
   Log("pcb 1:%p",&pcb[1]);
-  switch_boot_pcb();
-
   Log("Initializing processes...");
 }
 
