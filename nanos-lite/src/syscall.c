@@ -63,7 +63,6 @@ int sys_lseek()
 /* 启动的时候根据elf文件找到 static区 将参数写入 */
 int sys_execve()
 {
-  Log("%s",(char *)args[1]);
   return execve((char *)args[1],(char**)args[2],(char**)args[3]);
 }
 /* steal from xv6 os */
