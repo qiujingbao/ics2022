@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     printf("%s\n",argv[i]);
   }
   if (argc < 2) { builtin_sh_run(); }
-  else { extern_app_run(argv[1]); }
+  else { extern_app_run("/bin/cat"); }
 
   // should not reach here
   assert(0);
