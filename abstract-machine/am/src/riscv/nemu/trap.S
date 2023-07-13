@@ -49,7 +49,8 @@ __am_asm_trap:
 
   mv a0, sp
   jal __am_irq_handle
-
+  #reload from new context so set sp register
+  add sp,a0,x0
   LOAD t1, OFFSET_STATUS(sp)
   LOAD t2, OFFSET_EPC(sp)
   csrw mstatus, t1
