@@ -4,7 +4,11 @@
 
 #define SDL_STBIMAGE_IMPLEMENTATION
 #include "SDL_stbimage.h"
-
+SDL_Surface* IMG_Load_RW(SDL_RWops *src, int freesrc) {
+  assert(src->type == RW_TYPE_MEM);
+  assert(freesrc == 0);
+  return NULL;
+}
 SDL_Surface* IMG_Load(const char *filename) {
   printf("image load:%s\n",filename);
   FILE *fp=fopen(filename,"r");
