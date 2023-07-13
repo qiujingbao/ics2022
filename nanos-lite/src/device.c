@@ -26,6 +26,21 @@ int read_timeofday(struct timeval *tv){
   tv->tv_usec = io_read(AM_TIMER_UPTIME).us % 1000000;
   return 0;
 }
+size_t dispinfo_read(void *buf, size_t offset, size_t len) {
+  int w = io_read(AM_GPU_CONFIG).width;
+  int h = io_read(AM_GPU_CONFIG).height;
+  return sprintf((char*)buf,"WIDTH:%d\nHEIGHT:%d\n",w,h);
+}
+size_t fb_write(const void *buf, size_t offset, size_t len) {
+  yield();
+  int w = io_read(AM_GPU_CONFIG).width;
+  int h = io_read(AM_GPU_CONFIG).height;
+  int x = (offset/4)%w;
+  int y = (offset/4)/w;
+  if(offset+len > w*h*4) len = w*h*4 - offset;
+  io_write(AM_GPU_FBDRAW,x,y,(uint32_t*)buf,len/4,1,true);
+  return len;
+}
 //TODO:添加对len的处理
 size_t events_read(void *buf, size_t offset, size_t len) {
   yield();
@@ -34,17 +49,6 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   sprintf(buf,"%s %s\n",ev.keydown?"kd":"ku",keyname[ev.keycode]);
   return len;
 }
-
-size_t dispinfo_read(void *buf, size_t offset, size_t len)
-{
-  return 0;
-}
-
-size_t fb_write(const void *buf, size_t offset, size_t len)
-{
-  return 0;
-}
-
 void init_device()
 {
   Log("Initializing devices...");
