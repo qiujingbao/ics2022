@@ -14,6 +14,7 @@ int main() {
   Log("Build time: %s, %s", __TIME__, __DATE__);
   Log("size:%d",sizeof(AddrSpace));
   Log("size:%d",sizeof(struct Context *));
+  Log("size:%d",sizeof(uintptr_t));
   init_mm();
 
   init_device();
