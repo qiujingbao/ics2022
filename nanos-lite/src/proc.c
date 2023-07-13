@@ -28,11 +28,11 @@ char *hello_arg_test1="kcontext 1 !!!";
 char *hello_arg_test2="kcontext 2 !!!";
 extern void naive_uload(PCB *pcb, const char *filename);
 extern void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
-char *s[]={"hello","ok","zzzz"};
+static char *args_menu[] = {"/bin/menu", "sss","ok","sssss",NULL};
 void init_proc() {
  
   context_kload(&pcb[0], hello_fun,NULL);
-  context_uload(&pcb[1], "/bin/hello", s,NULL);
+  context_uload(&pcb[1], "/bin/hello", args_menu,NULL);
 
   switch_boot_pcb();
   Log("Initializing processes...");
