@@ -25,7 +25,7 @@ void init_proc() {
   Log("Initializing processes...");
 
   // load program here
-  naive_uload(&pcb[0],"/bin/bmp-test");  /* 查看file.h中的路径 而不是单独名称*/
+  naive_uload(&pcb[0],"/bin/nslider");  /* 查看file.h中的路径 而不是单独名称*/
 }
 
 Context* schedule(Context *prev) {
